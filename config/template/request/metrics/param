@@ -1,0 +1,3 @@
+req_type="GET"
+route="metrics"
+response_type="txt"
