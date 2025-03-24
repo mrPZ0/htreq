@@ -1,26 +1,92 @@
-#!/bin/bash
+#!/bin/env bash 
+#
+PACKAGE_NAME="htreq"
 str_delimiter="======================================"
-engine=$1
-stand=$2
-test=$3
+command_func="get_help"
+
+declare -A command_options=()
+declare -a command_arguments=()
+
+function get_help() {
+    echo "use htreq.sh  <command> "
+    echo " COMMAND "
+    echo "-ls <движок> отображает запросы доступные для движка "
+    echo "-test <движок> <стенд> <тест> запускает тест "
+    echo "-init <> создает структуру папок конфигов "
+    echo "-new <движок> <стенд> <тест> создает новый тест из шаблона "
+    echo "-logs создает файл лога "
+    echo "-debug [verbose] вывод отладки  "
+}
+
+function load_options() {
+    if [[ "$1" != "" ]]; then
+        local s=${1}
+        local name=${s%%=*}
+        local value=${s#*=}
+        #echo " name = value"
+        command_options["$name"]+="${value} "
+    fi
+}
+
+function load_arguments() {
+    if [[ "$1" != "" ]]; then
+        command_arguments[${#command_arguments[*]}]=${1}
+        
+    fi
+}
+
+function parse_arguments() {
+    #echo $@
+    for i in "$@"; do
+        #echo $i
+        case $i in
+            -h|--help)
+                get_help
+            ;;
+            -ls|--list)
+                command_func="list_request" 
+            ;;
+            -test|--test)
+                command_func="test_run" 
+            ;;
+            -init|--init)
+                command_func="init_run" 
+            ;;
+            -new|--new)
+                command_func="new_run" 
+            ;;
+            -logs|--logs)
+                command_func="logs_setup" 
+            ;;
+            -debug|--debug)
+                command_func="debug_setup" 
+            ;;
+
+            --*=*)
+                load_options ${i:2}
+            ;;
+            -*=*)
+                load_options ${i:1}
+            ;;
+            *)
+                load_arguments ${i}
+            ;;
+        esac
+    done
+}
 
 function load_config() {
     # defaults
-    PACKAGE_NAME="htreq"
-    curl_binary="curl"
-    data_file="data.json"
-    request_header="Content-Type: application/json"
-    response_flow_file="response.txt"
-    req_headers=()
+    source ./config/htreq.defaults
     # load ./htreq config
-    source ./config/htreq.conf
+    source ./htreq.conf
     # load stand env
     source ./config/${engine}/${stand}/env
     # load request params
     requests_dir="./config/${engine}/request"
     source ${requests_dir}/${test}/param
     if [ -e "${requests_dir}/$test/${data_file}" ]; then
-        data=$(cat ${requests_dir}/$test/${data_file})
+        #data=$(cat ${requests_dir}/$test/${data_file})
         full_data_file=$(realpath "${requests_dir}/$test/${data_file}")
     # echo $str_delimiter
     # echo $data
@@ -121,13 +187,17 @@ done
 }
 
 function init_folder() {
-    
+echo ""    
 }
-
 function new_from_template() {
-    
+echo ""
 }
 
+function test_run()
+{
+engine=$1
+stand=$2
+test=$3
 load_config
 prepare_output
 prepare_curl_params
@@ -135,3 +205,10 @@ prepare_curl_params
 (/bin/bash -c "${curl_binary} ${curl_params}  2>${out_dir}/$response_flow_file ")
 
 output_result
+}
+
+
+
+parse_arguments $@
+
+echo ${command_func} ${command_arguments[*]}
