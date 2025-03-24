@@ -1,0 +1,4 @@
+PACKAGE_NAME="htreq"
+PACKAGE_VERSION=1.0.0
+SOURCE_BIN_LIST=$( ls  *.sh -1)
+SOURCE_ETC_LIST=$( ls -d -1 "$PWD"/config/*)
