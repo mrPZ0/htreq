@@ -8,14 +8,20 @@ declare -A command_options=()
 declare -a command_arguments=()
 
 function get_help() {
-    echo "use htreq.sh  <command> "
-    echo " COMMAND "
-    echo "-ls <движок> отображает запросы доступные для движка "
-    echo "-test <движок> <стенд> <тест> запускает тест "
-    echo "-init <> создает структуру папок конфигов "
-    echo "-new <движок> <стенд> <тест> создает новый тест из шаблона "
-    echo "-logs создает файл лога "
-    echo "-debug [verbose] вывод отладки  "
+    help_message=(
+    " "
+     " Use htreq.sh  <command> "
+     " "
+     " COMMAND "
+     "-ls <движок> отображает запросы доступные для движка "
+     "-test <движок> <стенд> <тест> запускает тест "
+     "-init <> создает структуру папок конфигов "
+     "-new <движок> <стенд> <тест> создает новый тест из шаблона "
+     "-logs создает файл лога "
+     "-debug [verbose] вывод отладки  "
+    )
+    printf '%s\n' "${help_message[@]}"
+
 }
 
 function load_options() {
@@ -215,4 +221,4 @@ output_result
 
 parse_arguments $@
 
-echo ${command_func} ${command_arguments[*]}
+ ${command_func} ${command_arguments[*]}
