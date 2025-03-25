@@ -150,8 +150,8 @@ function prepare_curl_params() {
     echo $str_delimiter
 }
 
-function output_result() {
-    response_status=$(grep "< HTTP/1.1" ${out_dir}/$response_flow_file)
+function check_response() {
+        response_status=$(grep "< HTTP/1.1" ${out_dir}/$response_flow_file)
     if [[ "$response_status" = "" ]]; then
         echo ERR
         exit 1
@@ -159,6 +159,10 @@ function output_result() {
     if [[ ! "${response_status}" = "" ]]; then
         echo "${response_status}" | gawk ' { print $3} '
     fi
+
+}
+
+function output_result() {
 
     # out  to console
     if [ "$response_type" = "json" ]; then
@@ -203,7 +207,7 @@ prepare_output
 prepare_curl_params
 #
 (/bin/bash -c "${curl_binary} ${curl_params}  2>${out_dir}/$response_flow_file ")
-
+check_response
 output_result
 }
 
