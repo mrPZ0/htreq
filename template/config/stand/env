@@ -1,5 +1,5 @@
 url="https://localhost:8088"
-cert="./secret/cert.pem"
-key="./secret/key.pem"
+cert="${secret_base_dir}/cert.pem"
+key="${secret_base_dir}/key.pem"
 userid=""
 secret=""

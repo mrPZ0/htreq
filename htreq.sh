@@ -10,15 +10,18 @@ declare -a command_arguments=()
 function get_help() {
     help_message=(
     " "
-     " Use htreq.sh  <command> "
+     " Use  <command> <arguments> [ options ] "
      " "
      " COMMAND "
      "-ls <движок> отображает запросы доступные для движка "
-     "-test <движок> <стенд> <тест> запускает тест "
+     "-req <движок> <стенд> <тест> запускает тест "
      "-init <> создает структуру папок конфигов "
      "-new <движок> <стенд> <тест> создает новый тест из шаблона "
-     "-logs создает файл лога "
-     "-debug [verbose] вывод отладки  "
+     " "
+     " OPTIONS "
+     "-logs=[file] создает файл лога "
+     "-debug=[verbose] вывод отладки  "
+     " "
     )
     printf '%s\n' "${help_message[@]}"
 
@@ -52,8 +55,8 @@ function parse_arguments() {
             -ls|--list)
                 command_func="list_request" 
             ;;
-            -test|--test)
-                command_func="test_run" 
+            -req|--request)
+                command_func="req_run" 
             ;;
             -init|--init)
                 command_func="init_run" 
@@ -62,10 +65,10 @@ function parse_arguments() {
                 command_func="new_run" 
             ;;
             -logs|--logs)
-                command_func="logs_setup" 
+                load_options "logs=logs_setup" 
             ;;
             -debug|--debug)
-                command_func="debug_setup" 
+                load_options "debug=debug_setup" 
             ;;
 
             --*=*)
@@ -203,7 +206,7 @@ function new_from_template() {
 echo ""
 }
 
-function test_run()
+function req_run()
 {
 engine=$1
 stand=$2
