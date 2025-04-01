@@ -10,7 +10,7 @@ declare -a command_arguments=()
 function get_help() {
     help_message=(
     " "
-     " Use  <command> <arguments> [ options ] "
+     " Use  htreq.sh  <command> <arguments> [ options ] "
      " "
      " COMMAND "
      "-ls <движок> отображает запросы доступные для движка "
