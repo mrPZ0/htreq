@@ -85,10 +85,10 @@ function parse_arguments() {
 }
 
 function load_config() {
-    # defaults
-    source ./config/htreq.defaults
     # load ./htreq config
     source ./htreq.conf
+    # load env defaults
+    source ./config/htreq.defaults
     # load stand env
     source ./config/${engine}/${stand}/env
     # load request params
@@ -186,7 +186,8 @@ function output_result() {
 }
 
 function list_request(){
-    path1="./config/${engine}/request"
+engine=$1
+path1="./config/${engine}/request"
 _requests=$(ls $path1)
 
 
@@ -194,7 +195,7 @@ echo "|----------|---------------------| "
 for _rq in ${_requests[*]}
 do
 #echo " ${_rq}  | " $(grep description $path1/${_rq}/param)
-echo " ${_rq}  | " $(. $path1/${_rq}/param && echo $test_description )
+echo "| ${_rq}  | " $(. $path1/${_rq}/param && echo $test_description )
 done
 
 }
