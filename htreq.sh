@@ -1,9 +1,10 @@
-#!/bin/env bash 
+#!/bin/bash 
 #
 PACKAGE_NAME="htreq"
 str_delimiter="======================================"
 command_func="get_help"
-
+# load ./htreq config
+source ./htreq.conf
 declare -A command_options=()
 declare -a command_arguments=()
 
@@ -16,7 +17,7 @@ function get_help() {
      "-ls <движок> отображает запросы доступные для движка "
      "-req <движок> <стенд> <тест> запускает тест "
      "-init <> создает структуру папок конфигов "
-     "-new <движок> <стенд> <тест> создает новый тест из шаблона "
+     "-new <движок> <тест> создает новый тест из шаблона "
      " "
      " OPTIONS "
      "-logs=[file] создает файл лога "
@@ -24,7 +25,7 @@ function get_help() {
      " "
     )
     printf '%s\n' "${help_message[@]}"
-
+exit 0
 }
 
 function load_options() {
@@ -50,7 +51,7 @@ function parse_arguments() {
         #echo $i
         case $i in
             -h|--help)
-                get_help
+                command_func="get_help"
             ;;
             -ls|--list)
                 command_func="list_request" 
@@ -85,14 +86,13 @@ function parse_arguments() {
 }
 
 function load_config() {
-    # load ./htreq config
-    source ./htreq.conf
+
     # load env defaults
-    source ./config/htreq.defaults
+    source ${config_base_dir}/htreq.defaults
     # load stand env
-    source ./config/${engine}/${stand}/env
+    source ${config_base_dir}/${engine}/${stand}/env
     # load request params
-    requests_dir="./config/${engine}/request"
+    requests_dir="${config_base_dir}/${engine}/request"
     source ${requests_dir}/${test}/param
     if [ -e "${requests_dir}/$test/${data_file}" ]; then
         #data=$(cat ${requests_dir}/$test/${data_file})
@@ -112,7 +112,7 @@ function load_config() {
 
 function prepare_output() {
     req_date=$(date +%Y-%m-%d-%H-%M)
-    out_dir="./data/${engine}/${stand}/${test}/${req_date}"
+    out_dir="${output_base_dir}/${engine}/${stand}/${test}/${req_date}"
     # create output dir
     if [ ! -d ${out_dir} ]; then
         mkdir -p ${out_dir}
@@ -187,7 +187,7 @@ function output_result() {
 
 function list_request(){
 engine=$1
-path1="./config/${engine}/request"
+path1="${config_base_dir}/${engine}/request"
 _requests=$(ls $path1)
 
 
@@ -201,14 +201,24 @@ done
 }
 
 function init_folder() {
-echo ""    
+echo "create htreq environments"
+mkdir -p {$config_base_dir,$output_base_dir,$secret_base_dir}
+cp -f ${template_dir}/htreq.conf ./htreq.conf
+cp -f ${template_dir}/config/htreq.defaults $config_base_dir/htreq.defaults
 }
 function new_from_template() {
-echo ""
+echo "create new request folder"
+engine=$1
+test=$2
+mkdir -p {$config_base_dir,$secret_base_dir}/${engine}/${test}
+cp -f ${template_dir}/config/request/get $config_base_dir/${engine}/${test}
 }
 
 function req_run()
 {
+    if  [ $# -lt 3 ]; then
+    get_help
+    fi
 engine=$1
 stand=$2
 test=$3
