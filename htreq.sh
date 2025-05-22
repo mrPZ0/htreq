@@ -60,10 +60,10 @@ function parse_arguments() {
                 command_func="req_run" 
             ;;
             -init|--init)
-                command_func="init_run" 
+                command_func="init_folder" 
             ;;
             -new|--new)
-                command_func="new_run" 
+                command_func="new_from_template" 
             ;;
             -logs|--logs)
                 load_options "logs=logs_setup" 
@@ -210,8 +210,8 @@ function new_from_template() {
 echo "create new request folder"
 engine=$1
 test=$2
-mkdir -p {$config_base_dir,$secret_base_dir}/${engine}/${test}
-cp -f ${template_dir}/config/request/get $config_base_dir/${engine}/${test}
+mkdir -p $config_base_dir/${engine}/request/${test}
+cp -rf ${template_dir}/config/request/get/. $config_base_dir/${engine}/request/${test}
 }
 
 function req_run()
