@@ -129,21 +129,20 @@ function prepare_curl_params() {
     # request
     #curl --version
     curl_params="--request ${req_type} \
+    --url ${url}/${route} \
     -k \
     --cert ${cert} \
-    --key ${key} \
-    --url ${url}/${route} \
-    --header '${request_header}' "
+    --key ${key} "
 
     #echo ${req_headers[*]}
-    OLD_IFS="$IFS"
-    IFS=","
+#    OLD_IFS="$IFS"
+#    IFS=","
     for req_header in ${req_headers[*]}; do
         if [[ "${req_header}" != "" ]]; then
             curl_params+="--header '${req_header}' "
         fi
     done
-    IFS="$OLD_IFS"
+#    IFS="$OLD_IFS"
 
     curl_params+=" -s \
     -v \

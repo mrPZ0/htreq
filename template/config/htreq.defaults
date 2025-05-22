@@ -5,6 +5,6 @@ logs_enable=""
 curl_binary="curl"
 
 data_file="data.json"
-request_header="Content-type: application/json"
+#request_header="Content-type: application/json"
 response_flow_file="response.txt"
-req_headers=()
+req_headers=("Content-type: application/json" )
