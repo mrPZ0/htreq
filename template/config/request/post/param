@@ -3,3 +3,4 @@ route="request"
 response_type="json"
 data_file="data.json"
 test_description="release 1 test 1"
+req_headers+=("" )
